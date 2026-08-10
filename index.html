@@ -3,21 +3,122 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>COMP4020 prototype</title>
+    <title>Bury it in the middle and the model won't find it</title>
+    <meta
+      name="description"
+      content="An interactive explainer of the 'lost in the middle' effect: why facts placed in the middle of a long AI context are recalled far less reliably than facts at the start or end."
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header>
       <nav aria-label="Primary">
-        <a href="./">Home</a>
+        <a href="./">The Lost Middle</a>
       </nav>
     </header>
     <main>
-      <h1>COMP4020 prototype</h1>
-      <p data-testid="intro">
-        Replace this with your prototype. This week's brief is on the course website;
-        <code>spec/README.md</code> explains how the checks in this repo relate to it.
+      <h1>Bury it in the middle and the model won't find it</h1>
+
+      <p class="lede">
+        Feed a language model a long context --- a long chat history, a stack
+        of retrieved documents, a big pasted file --- and it doesn't treat
+        every part of it equally. A fact placed at the very start or the very
+        end tends to get noticed. The same fact placed in the middle tends to
+        get lost, and the longer the context, the worse the burial. This is
+        the
+        <a
+          href="https://arxiv.org/abs/2307.03172"
+          target="_blank"
+          rel="noreferrer"
+          >"lost in the middle" effect</a
+        >, and it matters every time you decide where to put the thing you
+        actually need the model to use.
       </p>
+
+      <section class="playground" aria-labelledby="playground-heading">
+        <h2 id="playground-heading">Try it</h2>
+        <p>
+          Picture a context window as a row of chunks --- paragraphs,
+          messages, documents. One chunk holds the fact you need the model to
+          use. Drag it around, stretch the context, and watch the model's
+          estimated recall move.
+        </p>
+
+        <div class="controls">
+          <div class="control">
+            <label for="length">Context length: <output id="length-value" for="length"></output> chunks</label>
+            <input type="range" id="length" min="4" max="40" step="2" value="20" />
+          </div>
+          <div class="control">
+            <label for="position"
+              >Position of the key fact: chunk
+              <output id="position-value" for="position"></output
+            ></label>
+            <input type="range" id="position" min="0" max="19" step="1" value="0" />
+          </div>
+        </div>
+
+        <div
+          id="chunks"
+          class="chunks"
+          role="img"
+          aria-label="Row of context chunks with the key fact highlighted"
+        ></div>
+
+        <p id="readout" class="readout" aria-live="polite"></p>
+
+        <figure class="chart-figure">
+          <svg
+            id="chart"
+            class="viz-root"
+            viewBox="0 0 400 160"
+            role="img"
+            aria-labelledby="chart-title chart-desc"
+          >
+            <title id="chart-title">Estimated recall by position</title>
+            <desc id="chart-desc">
+              A curve showing estimated recall accuracy across every position
+              in the current context length, with the current position marked.
+            </desc>
+          </svg>
+          <figcaption>
+            Estimated recall across every position in a
+            <output id="length-value-2" for="length"></output>-chunk context.
+            The marked point is where you put the fact.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="explainer" aria-labelledby="why-heading">
+        <h2 id="why-heading">Why the middle loses</h2>
+        <p>
+          Models built on attention don't scan a context evenly --- they
+          weigh some positions more than others, and in practice that weight
+          skews toward the start and the end. Liu et al.'s
+          <a
+            href="https://arxiv.org/abs/2307.03172"
+            target="_blank"
+            rel="noreferrer"
+            >"Lost in the Middle: How Language Models Use Long Contexts"</a
+          >
+          (2023) found this U-shaped pattern across several models: accuracy
+          on a fact retrieval task was highest when the relevant document sat
+          at the very start or end of the input, and dropped sharply for
+          documents placed in the middle --- worse still as more documents
+          were added.
+        </p>
+        <p class="caveat">
+          <strong>A note on the numbers above:</strong> the curve you moved is
+          a hand-tuned illustrative model of that U shape, not the paper's own
+          measurements --- exact numbers vary by model, task and prompt, and
+          the paper doesn't publish a single curve you could copy in here
+          honestly. What does reliably hold, across the models it and later
+          work have tested, is the shape: worse in the middle, and worse
+          again as the context grows. If you're deciding where to put the one
+          fact a model absolutely has to use, that shape is the part worth
+          keeping in your head.
+        </p>
+      </section>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

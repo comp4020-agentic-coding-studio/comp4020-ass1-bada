@@ -1,9 +1,54 @@
+:root {
+  color-scheme: light;
+
+  --page-plane: #f9f9f7;
+  --surface-1: #fcfcfb;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --gridline: #e1e0d9;
+  --axis: #c3c2b7;
+  --series-1: #2a78d6;
+  --border: rgb(11 11 11 / 10%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --page-plane: #0d0d0d;
+    --surface-1: #1a1a19;
+    --text-primary: #fff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --gridline: #2c2c2a;
+    --axis: #383835;
+    --series-1: #3987e5;
+    --border: rgb(255 255 255 / 10%);
+  }
+}
+
 body {
   margin: 0;
-  padding: 2rem;
+  padding: 0 1.25rem 3rem;
   font-family: system-ui, sans-serif;
   line-height: 1.6;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  background: var(--page-plane);
+}
+
+header {
+  padding: 1rem 0;
+}
+
+a {
+  color: var(--series-1);
+}
+
+nav a {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 main {
@@ -11,6 +56,107 @@ main {
   margin: 0 auto;
 }
 
-a {
-  color: #0b5fff;
+h1 {
+  font-size: 1.9rem;
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: 1.3rem;
+}
+
+.lede {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.playground,
+.explainer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.controls {
+  display: grid;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.control label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.control input[type="range"] {
+  width: 100%;
+}
+
+.chunks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 0.75rem;
+  background: var(--surface-1);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.chunk {
+  width: 12px;
+  height: 24px;
+  border-radius: 2px;
+  background: var(--gridline);
+}
+
+.chunk-key {
+  background: var(--series-1);
+}
+
+.readout {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.25rem 0;
+}
+
+.chart-figure {
+  margin: 0;
+}
+
+#chart {
+  width: 100%;
+  height: auto;
+  background: var(--surface-1);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.chart-axis {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+
+.chart-line {
+  stroke: var(--series-1);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chart-dot {
+  fill: var(--series-1);
+  stroke: var(--surface-1);
+  stroke-width: 2;
+}
+
+figcaption {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.caveat {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
 }
