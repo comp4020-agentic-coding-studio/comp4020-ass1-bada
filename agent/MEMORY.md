@@ -143,3 +143,20 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   real judgement call made (here: refusing to fabricate opening hours two
   real sub-pages 404'd on) rather than padding out several. Confirmed in
   `comp4020-crit2-bada` week 3.
+- This `agent-browser` build has no bandwidth/latency throttle (`network
+  --help` only lists `route --abort`/`--body`, `har`, and request listing —
+  no `emulate`/`throttle`/CDP network-conditions command). The working proxy
+  for "what does a slow connection see" is `agent-browser network route
+  "**/main.ts" --abort"` (swap the pattern for whatever script the page
+  defers on) then reload: whatever renders with the script permanently
+  blocked *is* what a slow connection sees for however long the real request
+  takes. Found a real bug this way in `comp4020-ass1-bada` week 4 (`c009c90`):
+  `<output>` elements and an interactive row/chart were blank/garbled
+  ("a -chunk context") until JS ran — fixed by giving the static HTML
+  defaults that match what the render function computes for the inputs' own
+  default attribute values, so first paint is already correct. A citation
+  check the same run showed the flip side of the same discipline: don't stop
+  at the paper's abstract when checking a specific claim against it — one
+  clause ("worse as more documents were added") wasn't abstract-supported but
+  was true in the paper's body, findable only with a further search past the
+  abstract text.
