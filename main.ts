@@ -84,6 +84,11 @@ function renderChart(svg: Element, curve: number[], position: number): void {
   const currentY = yFor(curve[position] ?? 0);
 
   svg.innerHTML = `
+    <title id="chart-title">Estimated recall by position</title>
+    <desc id="chart-desc">
+      A curve showing estimated recall accuracy across every position
+      in the current context length, with the current position marked.
+    </desc>
     <line x1="${CHART_PAD}" y1="${CHART_PAD}" x2="${CHART_PAD}" y2="${CHART_HEIGHT - CHART_PAD}" class="chart-axis" />
     <line x1="${CHART_PAD}" y1="${CHART_HEIGHT - CHART_PAD}" x2="${CHART_WIDTH - CHART_PAD}" y2="${CHART_HEIGHT - CHART_PAD}" class="chart-axis" />
     <polyline points="${points}" class="chart-line" fill="none" />

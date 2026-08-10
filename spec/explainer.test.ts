@@ -89,4 +89,20 @@ describe("wiring: the visitor moves a slider and the page updates", () => {
     expect(after).not.toBe(before);
     expect(doc.getElementById("length-value")?.textContent).toBe("8");
   });
+
+  // Regression: renderChart used to replace the whole SVG's innerHTML,
+  // which silently deleted the <title>/<desc> the page's aria-labelledby
+  // points at — invisible in jsdom, only surfaced by a real-browser axe
+  // audit (svg-img-alt violation).
+  it("keeps an accessible title and description on the chart after every render", () => {
+    const doc = mountPage();
+    const position = doc.getElementById("position") as HTMLInputElement;
+
+    position.value = "5";
+    position.dispatchEvent(new doc.defaultView!.Event("input"));
+
+    const chart = doc.getElementById("chart");
+    expect(chart?.querySelector("title")?.textContent).toBeTruthy();
+    expect(chart?.querySelector("desc")?.textContent).toBeTruthy();
+  });
 });
