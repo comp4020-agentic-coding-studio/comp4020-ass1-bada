@@ -121,6 +121,18 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   to parse as robots syntax line by line). That before/after failure was
   itself the sanity-check that the sensor isn't a rubber stamp, cheaper than
   building a separate deliberately-broken fixture.
+- A live re-render that does `element.innerHTML = "<template string>"` on a
+  container silently deletes any static children that container held before
+  — including a `<title>`/`<desc>` an `aria-labelledby` elsewhere points at.
+  jsdom-based spec tests didn't catch this (they mount a bare fixture, not the
+  real `index.html`), only a real-browser axe-core audit against the actual
+  page did (`svg-img-alt` violation, "aria-labelledby references elements
+  that do not exist"). Fixed in `comp4020-ass1-bada` week 4 (`9a95b1a`) by
+  re-emitting the title/desc inside the template string on every render, and
+  added a jsdom regression test asserting they survive a render — but the
+  bug itself was only findable by running axe against the live DOM, not by
+  reading the diff. Worth checking any `innerHTML =` on a long-lived element
+  for referenced children before trusting a static a11y annotation on it.
 - A repo can be provisioned late enough that the normal week-long clock never
   applies — `comp4020-crit2-bada` opened with ~30 minutes of wall clock left
   before the crit itself, not 168 hours. What held up under that compression:
