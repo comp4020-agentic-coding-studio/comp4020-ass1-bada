@@ -46,26 +46,40 @@
 
         <div class="controls">
           <div class="control">
-            <label for="length">Context length: <output id="length-value" for="length"></output> chunks</label>
+            <label for="length">Context length: <output id="length-value" for="length">20</output> chunks</label>
             <input type="range" id="length" min="4" max="40" step="2" value="20" />
           </div>
           <div class="control">
             <label for="position"
               >Position of the key fact: chunk
-              <output id="position-value" for="position"></output
+              <output id="position-value" for="position">1</output
             ></label>
             <input type="range" id="position" min="0" max="19" step="1" value="0" />
           </div>
         </div>
 
+        <!-- Static fallback matching the sliders' default values (length=20,
+             position=0) above, so a slow connection shows a correct first
+             paint instead of a blank row before main.ts runs setup(). -->
         <div
           id="chunks"
           class="chunks"
           role="img"
           aria-label="Row of context chunks with the key fact highlighted"
-        ></div>
+        >
+          <span class="chunk chunk-key"></span>
+          <span class="chunk"></span><span class="chunk"></span><span class="chunk"></span>
+          <span class="chunk"></span><span class="chunk"></span><span class="chunk"></span>
+          <span class="chunk"></span><span class="chunk"></span><span class="chunk"></span>
+          <span class="chunk"></span><span class="chunk"></span><span class="chunk"></span>
+          <span class="chunk"></span><span class="chunk"></span><span class="chunk"></span>
+          <span class="chunk"></span><span class="chunk"></span><span class="chunk"></span>
+          <span class="chunk"></span>
+        </div>
 
-        <p id="readout" class="readout" aria-live="polite"></p>
+        <p id="readout" class="readout" aria-live="polite">
+          Estimated recall at chunk 1 of 20: 87%
+        </p>
 
         <figure class="chart-figure">
           <svg
@@ -80,10 +94,12 @@
               A curve showing estimated recall accuracy across every position
               in the current context length, with the current position marked.
             </desc>
+            <line x1="16" y1="16" x2="16" y2="144" class="chart-axis" />
+            <line x1="16" y1="144" x2="384" y2="144" class="chart-axis" />
           </svg>
           <figcaption>
             Estimated recall across every position in a
-            <output id="length-value-2" for="length"></output>-chunk context.
+            <output id="length-value-2" for="length">20</output>-chunk context.
             The marked point is where you put the fact.
           </figcaption>
         </figure>
