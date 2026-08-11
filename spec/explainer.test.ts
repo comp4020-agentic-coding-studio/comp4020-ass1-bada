@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 import { describe, expect, it } from "vitest";
-import { accuracyForPosition, curveForLength, setup } from "../main";
+import { accuracyForPosition, curveForLength, indexOfNearestCenter, setup } from "../main";
 
 // The core interaction: moving either slider changes what the visitor sees
 // (the highlighted chunk, the readout, the chart). These tests exercise the
@@ -44,6 +44,19 @@ describe("recall model (the shape the interaction is built on)", () => {
         expect(accuracy).toBeLessThanOrEqual(1);
       }
     }
+  });
+});
+
+describe("indexOfNearestCenter (the math behind dragging the key chunk)", () => {
+  it("picks the closest center, including past either end", () => {
+    const centers = [10, 30, 50, 70];
+    expect(indexOfNearestCenter(centers, 52)).toBe(2);
+    expect(indexOfNearestCenter(centers, -100)).toBe(0);
+    expect(indexOfNearestCenter(centers, 1000)).toBe(3);
+  });
+
+  it("breaks a tie by keeping the earlier index", () => {
+    expect(indexOfNearestCenter([10, 30], 20)).toBe(0);
   });
 });
 
@@ -93,6 +106,30 @@ describe("wiring: the visitor moves a slider and the page updates", () => {
     const after = doc.getElementById("chart")?.innerHTML;
     expect(after).not.toBe(before);
     expect(doc.getElementById("length-value")?.textContent).toBe("8");
+  });
+
+  // The row of chunks is draggable, not just decorative — pressing and
+  // moving the pointer over it should track the nearest chunk, same as
+  // dragging the position slider would. jsdom never lays elements out, so
+  // stub getBoundingClientRect on each chunk to give the drag math something
+  // real to compare against.
+  it("moves the key chunk to the nearest chunk under a dragged pointer", () => {
+    const doc = mountPage();
+    const chunks = doc.getElementById("chunks") as HTMLElement;
+
+    Array.from(chunks.children).forEach((el, i) => {
+      (el as HTMLElement).getBoundingClientRect = () =>
+        ({ left: i * 20, width: 16, right: i * 20 + 16, top: 0, bottom: 0, height: 0, x: i * 20, y: 0, toJSON() {} }) as DOMRect;
+    });
+    (chunks as unknown as { setPointerCapture: (id: number) => void }).setPointerCapture = () => {};
+
+    const PointerEventCtor = doc.defaultView!.PointerEvent ?? doc.defaultView!.MouseEvent;
+    const event = new PointerEventCtor("pointerdown", { clientX: 205 }) as PointerEvent;
+    Object.defineProperty(event, "pointerId", { value: 1 });
+    chunks.dispatchEvent(event);
+
+    expect(doc.getElementById("readout")?.textContent).toContain("chunk 11 of 20");
+    expect(doc.querySelectorAll(".chunk-key").length).toBe(1);
   });
 
   // Regression: renderChart used to replace the whole SVG's innerHTML,

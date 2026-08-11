@@ -101,6 +101,12 @@ h2 {
   background: var(--surface-1);
   border-radius: 6px;
   border: 1px solid var(--border);
+  cursor: grab;
+  touch-action: none;
+}
+
+.chunks:active {
+  cursor: grabbing;
 }
 
 .chunk {

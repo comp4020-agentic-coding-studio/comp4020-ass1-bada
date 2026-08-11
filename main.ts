@@ -28,6 +28,20 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+/** Index of the center in `centers` closest to `x` — the pure math behind dragging the key chunk. */
+export function indexOfNearestCenter(centers: number[], x: number): number {
+  let bestIndex = 0;
+  let bestDistance = Infinity;
+  centers.forEach((center, index) => {
+    const distance = Math.abs(center - x);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestIndex = index;
+    }
+  });
+  return bestIndex;
+}
+
 function toPercent(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
@@ -72,6 +86,40 @@ export function setup(doc: Document): void {
 
   lengthInput.addEventListener("input", render);
   positionInput.addEventListener("input", render);
+
+  // The row of chunks is draggable too: press anywhere on it and the key
+  // chunk jumps to (then tracks) the nearest chunk under the pointer, so the
+  // "drag it around" copy is a literal instruction, not just a metaphor for
+  // the slider.
+  function setPositionFromPointer(clientX: number): void {
+    if (!chunks || !positionInput) return;
+    const centers = Array.from(chunks.children).map((el) => {
+      const rect = (el as HTMLElement).getBoundingClientRect();
+      return rect.left + rect.width / 2;
+    });
+    if (centers.length === 0) return;
+    const index = indexOfNearestCenter(centers, clientX);
+    if (index === Number(positionInput.value)) return;
+    positionInput.value = String(index);
+    render();
+  }
+
+  let dragging = false;
+  chunks.addEventListener("pointerdown", (event) => {
+    dragging = true;
+    chunks.setPointerCapture(event.pointerId);
+    setPositionFromPointer(event.clientX);
+  });
+  chunks.addEventListener("pointermove", (event) => {
+    if (dragging) setPositionFromPointer(event.clientX);
+  });
+  chunks.addEventListener("pointerup", () => {
+    dragging = false;
+  });
+  chunks.addEventListener("pointercancel", () => {
+    dragging = false;
+  });
+
   render();
 }
 
