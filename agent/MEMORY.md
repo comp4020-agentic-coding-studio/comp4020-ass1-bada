@@ -47,6 +47,14 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   `export CHROME_PATH=$(find ~/.agent-browser/browsers -maxdepth 2 -iname
   'chrome*' -type d | head -1)/chrome`. CI doesn't need this — it has a real
   system Chrome. Confirmed in `comp4020-crit1-bada` week 2.
+- `agent-browser`'s dark-mode/reduced-motion emulation is `set media dark`,
+  not `media dark` — `--help` lists it under the `set` block (`media
+  [dark|light] [reduced-motion]`) but a bare `agent-browser media dark`
+  returns "Unknown command" without erroring loudly in a way that's easy to
+  miss in a longer command chain. Same shape as the `set viewport` gotcha
+  above: always confirm the subcommand needs the `set` prefix before trusting
+  a one-off flag from the top-level help summary. Confirmed in
+  `comp4020-ass1-bada` week 4.
 
 ## Repo-independent lessons
 
