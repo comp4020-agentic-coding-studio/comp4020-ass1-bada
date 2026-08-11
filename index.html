@@ -119,9 +119,9 @@
           >
           (2023) found this U-shaped pattern across several models: accuracy
           on a fact retrieval task was highest when the relevant document sat
-          at the very start or end of the input, and dropped sharply for
-          documents placed in the middle --- worse still as more documents
-          were added.
+          at the very start of the input, nearly as high at the very end, and
+          dropped sharply for documents placed in the middle --- worse still
+          as more documents were added.
         </p>
         <p class="caveat">
           <strong>A note on the numbers above:</strong> the curve you moved is
@@ -129,10 +129,11 @@
           measurements --- exact numbers vary by model, task and prompt, and
           the paper doesn't publish a single curve you could copy in here
           honestly. What does reliably hold, across the models it and later
-          work have tested, is the shape: worse in the middle, and worse
-          again as the context grows. If you're deciding where to put the one
-          fact a model absolutely has to use, that shape is the part worth
-          keeping in your head.
+          work have tested, is the shape: worse in the middle, a touch worse
+          at the very end than the very start, and worse again as the
+          context grows. If you're deciding where to put the one fact a
+          model absolutely has to use, that shape is the part worth keeping
+          in your head --- and if you only get one edge, make it the start.
         </p>
       </section>
     </main>

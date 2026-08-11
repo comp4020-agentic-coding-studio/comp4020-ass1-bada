@@ -18,10 +18,15 @@ describe("recall model (the shape the interaction is built on)", () => {
     expect(end).toBeGreaterThan(middle);
   });
 
-  it("is symmetric around the middle of the context", () => {
+  // Was "is symmetric around the middle of the context" — that asserted a
+  // clean U the paper doesn't actually show. Liu et al.'s figures have
+  // primacy (start) recall edging out recency (end) recall; a truly
+  // symmetric model was the bug, not a simplification worth keeping.
+  it("recalls the start slightly better than the end, matching the paper's primacy-over-recency asymmetry", () => {
     const length = 21;
-    expect(accuracyForPosition(0, length)).toBeCloseTo(accuracyForPosition(length - 1, length), 5);
-    expect(accuracyForPosition(5, length)).toBeCloseTo(accuracyForPosition(length - 1 - 5, length), 5);
+    const start = accuracyForPosition(0, length);
+    const end = accuracyForPosition(length - 1, length);
+    expect(start).toBeGreaterThan(end);
   });
 
   it("gets harder — a lower peak and a deeper dip — as the context grows", () => {

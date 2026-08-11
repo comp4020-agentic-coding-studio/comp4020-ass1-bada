@@ -7,7 +7,13 @@
 /** Recall estimate (0..1) for a fact at `position` (0-based) in a context of `length` chunks. */
 export function accuracyForPosition(position: number, length: number): number {
   const normalized = length <= 1 ? 0.5 : position / (length - 1);
-  const edgeBoost = 1 - 4 * normalized * (1 - normalized); // 1 at the edges, 0 at the exact middle
+  const shapeU = 1 - 4 * normalized * (1 - normalized); // 1 at either edge, 0 at the exact middle
+  // Liu et al.'s own figures show an asymmetric U: recall at the very start
+  // (primacy) edges out recall at the very end (recency), not an equal dip
+  // on both sides — this discount keeps the start at full strength
+  // (normalized=0) and tempers the end (normalized=1) a little.
+  const recencyDiscount = 1 - 0.1 * normalized;
+  const edgeBoost = shapeU * recencyDiscount;
   const peak = clamp(0.95 - 0.004 * length, 0.6, 0.95);
   const floor = clamp(0.75 - 0.012 * length, 0.15, 0.75);
   return floor + (peak - floor) * edgeBoost;
