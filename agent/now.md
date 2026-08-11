@@ -1,76 +1,70 @@
 # now
 
-## State as of this run (2026-08-11, ~141h to cutoff, assignment 1)
+## State as of this run (2026-08-11, ~135h to cutoff, assignment 1)
 
 `comp4020-ass1-bada` --- individual prototype, due noon Mon 17 Aug 2026. Brief
-re-fetched and unchanged. Still well outside 24h, so another **deepen** run
---- closed out the last open candidate from the prior hand-off: whether the
-hand-tuned recall curve's *shape* (not just the caveat wording) actually
-tracks the paper's real accuracy-vs-position figure.
+re-fetched and unchanged. Still well outside 24h, so another **deepen** run.
 
-Web search on Liu et al.'s actual figures (not just the abstract) showed the
-U is **asymmetric**: accuracy is highest with the relevant document at the
-very start (primacy), nearly as high but measurably lower at the very end
-(recency), and worst in the middle. The site's model (`accuracyForPosition`
-in `main.ts`) was a perfectly symmetric parabola --- and `spec/explainer.test.ts`
-had a test literally named "is symmetric around the middle of the context"
-asserting that as a contract. That test encoded the bug, not a simplification
-worth keeping.
+Re-read `spec/README.md` and the assignment JSON's "How it's marked" table as
+the prior hand-off asked, then actually opened the live dev server in
+`agent-browser` at both marking viewports rather than judging the copy from
+the diff alone. Found a real gap: the lede has said "Drag it around" since
+the very first commit ([`a14acb7`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/a14acb7)),
+but the only control was ever a range slider --- there was never an actual
+drag affordance, through several "closed out" interaction-review passes.
 
-Fixed in [`cdd57e9`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/cdd57e9):
-added a smooth `recencyDiscount` factor (full strength at the start,
-tempered ~10% at the end, no effect at the exact middle where the U already
-bottoms at 0) so the curve keeps its single dip but the two edges are no
-longer equal. Replaced the symmetry test with one asserting
-`accuracyForPosition(0, length) > accuracyForPosition(length-1, length)`.
-Sharpened both the "Why the middle loses" paragraph and the caveat paragraph
-in `index.html` to name the asymmetry explicitly ("highest... at the very
-start..., nearly as high at the very end") without fabricating a specific
-number the paper doesn't give. Verified live in `agent-browser` at both
-marking viewports (1920×1080 and 390×844): position=0 reads 87%, position=19
-(end of a 20-chunk context) reads 83%, chart visibly shows the right edge
-sitting a touch lower than the left. `pnpm check` green throughout (still 23
-tests --- one test rewritten, none added/removed). Committed and pushed;
-`git status` clean, `origin/main` == `HEAD`.
+Fixed in [`0dd2315`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/0dd2315):
+wired real pointer drag onto the chunk row itself (mouse + touch), pressing
+and moving over it tracks the nearest chunk via a small pure function
+(`indexOfNearestCenter`), kept the sliders as the keyboard/AT-accessible
+path. Verified live: dragged end-to-end at 1920x1080 and confirmed the
+slider/readout/chart all stay in sync; dragged at 390x844 and confirmed
+`window.scrollY` didn't move during the drag (`touch-action: none` doing its
+job); ran a real axe-core pass against the live DOM afterward --- zero
+violations. `pnpm check` green, 26 tests (3 new: the pure function, a
+DOM-level drag wiring test with stubbed `getBoundingClientRect`, since jsdom
+never lays anything out).
 
-This is a good harness-level correction candidate for `PROCESS.md` later:
-the fix required *throwing away* a test that had been asserting the wrong
-contract, not just editing the implementation to pass it.
+Also closed a second gap noticed along the way: `CLAUDE.md` was still pure
+boilerplate five commits in, despite real lessons already sitting in the
+history (the innerHTML/a11y wipe, the pre-JS static-default fix, the
+symmetric-curve test bug). Wrote them into a new "Lessons this prototype has
+taught" section in [`461fd2d`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/461fd2d)
+rather than saving that for the finishing pass --- growing the harness as
+lessons land, not backfilling it, is the point of the file. Committed and
+pushed; `git status` clean, `origin/main` == `HEAD`.
 
 ## Single most important next action
 
-Still not a finishing run --- ~141h were left at start, well outside the
-last 24h. Next run(s):
+Still not a finishing run --- ~135h were left at start. Next run(s):
 
-1. If still meaningfully more than 24h left: the HD-artefact band's
-   candidates are now all closed out (copy/interaction review, keyboard,
-   resize mid-interaction, accessibility, slow connection, citation
-   accuracy, and now curve-shape accuracy against the paper's real figures).
-   A fresh angle worth a look: whether the explainer's *framing/hook* itself
-   could be sharper per the brief's "pointed, surprising answer... scoped
-   with judgement" — is there a stronger lede than the current one, or a
-   genre choice (per the exemplars list) that would carry the idea further?
-   Otherwise this repo may be close to done well ahead of schedule --- worth
-   explicitly re-reading `spec/README.md` and the assignment JSON's "How
-   it's marked" table again next run to check nothing in "response to the
-   brief" (35% weight) is still thin before assuming there's nothing left to
-   deepen.
+1. If still meaningfully more than 24h left: the HD-artefact-band candidates
+   are now genuinely thin on the ground (copy/interaction review --- and this
+   run found the interaction review had actually missed something real, so
+   it's worth one more skeptical pass rather than assuming the list is
+   exhausted --- keyboard, resize mid-interaction, accessibility, slow
+   connection, citation accuracy, curve-shape accuracy, and now the drag
+   affordance matching its own copy). Worth checking: does the drag+slider
+   combo still feel obvious to a first-time visitor with no instructions
+   beyond the lede, or does it want a lighter-touch visual cue (e.g. a
+   cursor-grab affordance is already there, but nothing hints "you can grab
+   this" before the first hover)? Otherwise re-read `spec/README.md` and the
+   assignment JSON's "How it's marked" table again before assuming there's
+   nothing left in "response to the brief" (35%) or "process" (45%).
 2. Once genuinely inside the last ~24h, do the finishing-steps pass in one
-   run: `PROCESS.md` (400--600 words, **3--4 moments**, not a template
-   count --- re-read `spec/README.md` and the assignment JSON's "What you
-   submit" section again first, since it specifically wants moments where a
-   correction landed in the *harness* rather than a retry). Strong
-   candidates already in the history: (a) the a11y fix at the render level
-   (`9a95b1a`) --- axe caught what jsdom structurally couldn't; (b) the
-   pre-JS fallback fix (`c009c90`) --- found by blocking the real network
-   request, not by reading the diff; (c) this run's asymmetric-curve fix
-   (`cdd57e9`) --- required deleting a test that had been asserting the
-   wrong contract, the clearest "thrown away, not retried" moment so far;
-   (d) the earlier "didn't fabricate the paper's numbers" caveat-writing
-   decision (`a14acb7`) if still worth citing. Then rewrite `CLAUDE.md` with
-   anything this repo's build taught that isn't already there, write
-   `reflections/assignment-1.md` (150--300 words, doubles as the week 4
-   retro entry per doctrine), then `/ship` and verify the *live* Pages URL
-   at both viewports, not just local `vite preview`.
+   run: `PROCESS.md` (400--600 words, **3--4 moments**, not a template count
+   --- re-read `spec/README.md` and the assignment JSON's "What you submit"
+   section first, since it specifically wants moments where a correction
+   landed in the *harness* rather than a retry). Strong candidates now in the
+   history: (a) the a11y fix at the render level (`9a95b1a`); (b) the pre-JS
+   fallback fix (`c009c90`); (c) the asymmetric-curve fix (`cdd57e9`) ---
+   required deleting a test asserting the wrong contract; (d) this run's
+   drag-affordance fix (`0dd2315`) plus the CLAUDE.md lessons commit
+   (`461fd2d`) --- a copy claim about the interaction that went unchecked for
+   three commits, caught by actually using the page rather than reading the
+   diff. Pick 3--4, not all of them. Then write
+   `reflections/assignment-1.md` (150--300 words, doubles as the week 4 retro
+   entry per doctrine), `/ship`, and verify the *live* Pages URL at both
+   viewports, not just local `vite preview`.
 3. Don't touch `comp4020-crit2-bada` or any other sibling repo from inside
    this run --- only this deliverable's window is open right now.

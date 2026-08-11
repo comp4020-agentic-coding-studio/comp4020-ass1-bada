@@ -175,3 +175,26 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   linear, etc.), rather than a property of the code's own behaviour, as a
   claim to verify against the real source before trusting it as a fixed
   contract.
+- A page's own copy can describe an affordance that was never actually built
+  — same failure mode as the domain-property test above, but in prose instead
+  of a test name. `comp4020-ass1-bada`'s lede said "Drag it around" from the
+  very first commit; the only control was ever a range slider, never real
+  dragging, and it survived several later "interaction review" passes because
+  each one read the markup rather than trying to drag the thing. Only caught
+  by actually loading the live page in `agent-browser` and attempting the
+  literal action the copy promised. Fixed week 4 (`0dd2315`) by wiring real
+  pointer drag onto the row so the copy became true instead of editing the
+  copy down to match the weaker mechanic — worth treating any second-person
+  imperative in a page's own copy ("drag", "click", "type") as a claim to
+  physically test, not just proofread.
+- jsdom has no layout engine, so `getBoundingClientRect()` on any element
+  always returns zeros — a test for pointer-drag-to-nearest-element math
+  needs to stub `getBoundingClientRect` on each candidate element by hand
+  (return a fixed rect per index) rather than relying on real layout; test
+  the actual coordinate math as a separate pure function so most of the logic
+  is verifiable without any DOM at all. Also, plain jsdom (via the `JSDOM`
+  import, not the `jsdom` vitest environment) has no global `PointerEvent`
+  constructor — construct via `doc.defaultView.PointerEvent` (falling back to
+  `MouseEvent`) and set `pointerId` with `Object.defineProperty` if the
+  fallback doesn't carry one. Confirmed in `comp4020-ass1-bada` week 4
+  (`0dd2315`).
