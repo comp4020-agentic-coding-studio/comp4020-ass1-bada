@@ -158,6 +158,37 @@ means building legibly is part of building well.
 You don't need a name, a student number, or any identity file in the repo: we
 know whose repo it is. Spend the effort on the work.
 
+## Lessons this prototype has taught
+
+Concrete, checked things this specific build got wrong once — kept here so a
+later change doesn't reintroduce them:
+
+- Any element that gets rewritten wholesale with `element.innerHTML =
+  "<template>"` on every re-render silently deletes static children that were
+  there before, including a `<title>`/`<desc>` some other element's
+  `aria-labelledby` points at. jsdom-only tests won't catch this (they mount a
+  bare fixture, not the real page); a real-browser axe-core run against the
+  live DOM will (`svg-img-alt`, "references elements that do not exist").
+  Re-emit any such referenced child inside the template string on every
+  render, and add a jsdom regression test asserting it survives (`9a95b1a`).
+- The pre-JS static markup (what a slow connection sees before the bundle
+  runs) has to be a real computed default, not a placeholder or blank state
+  — check it by blocking the script with `agent-browser network route
+  "**/main.ts" --abort` and reloading, not by reading the HTML (`c009c90`).
+- A test named after a property of the *domain* (symmetric, monotonic,
+  linear...) is a claim about the source material, not about the code. Check
+  it against the actual cited paper/dataset before trusting it as a fixed
+  contract — one such test here asserted a symmetric U that Liu et al.'s real
+  figures don't show, and had to be deleted, not just kept passing (`cdd57e9`).
+- Copy that describes an affordance ("drag it around") is a claim about the
+  interaction, same as a test name is a claim about the domain — check it
+  against what's actually wired up. That line described a slider for three
+  commits before anyone checked whether dragging worked (`0dd2315`).
+- A pointer-driven drag surface needs `touch-action: none` on the drag target
+  or a touch drag doubles as a page scroll; verified by checking
+  `window.scrollY` is unchanged across a simulated mobile drag, not by
+  assuming the CSS is enough.
+
 ## This file is yours
 
 This CLAUDE.md is a starting point, not a fixed rulebook. As you learn what your
