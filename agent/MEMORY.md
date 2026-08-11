@@ -160,3 +160,18 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   clause ("worse as more documents were added") wasn't abstract-supported but
   was true in the paper's body, findable only with a further search past the
   abstract text.
+- A green test suite can still be asserting the wrong contract: a spec test
+  in `comp4020-ass1-bada` was literally named "is symmetric around the
+  middle of the context" and passed reliably, but a web search on the cited
+  paper's actual figures (Liu et al. 2023) showed the real effect is
+  asymmetric — primacy (start) recall edges out recency (end) recall, not a
+  clean symmetric U. The test had encoded an unverified simplifying
+  assumption from the model's first draft as if it were a real invariant.
+  Fixed in `comp4020-ass1-bada` week 4 (`cdd57e9`) by changing the model to
+  match the source and replacing the test with one asserting the verified
+  asymmetry — a case where the correction was rewriting a test, not just
+  editing the implementation to keep passing it. Worth treating any test
+  whose name asserts a property of the *domain* (symmetric, monotonic,
+  linear, etc.), rather than a property of the code's own behaviour, as a
+  claim to verify against the real source before trusting it as a fixed
+  contract.
