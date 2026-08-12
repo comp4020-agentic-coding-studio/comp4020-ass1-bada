@@ -225,3 +225,15 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   `MouseEvent`) and set `pointerId` with `Object.defineProperty` if the
   fallback doesn't carry one. Confirmed in `comp4020-ass1-bada` week 4
   (`0dd2315`).
+- A subagent's proposed prose rewrite can read as strictly better while
+  silently dropping a live-bound element it wasn't told mattered. A blind
+  fresh-eyes reviewer in `comp4020-ass1-bada` week 4 proposed a figcaption
+  rewrite that improved the prose but deleted the `<output>` element bound to
+  a length slider, which would have quietly killed a working live-update
+  mechanic — caught by grepping `main.ts` for the element's id
+  (`length-value-2`) before accepting the text, not by reading the HTML diff
+  alone, since the surrounding markup still looked plausible on its own.
+  Adapted the rewrite to keep the binding rather than taking it verbatim.
+  Worth checking any subagent-proposed markup change for `id`/`for`
+  attributes referenced elsewhere before adopting it, same discipline as
+  fact-checking a subagent's prose claim against its source (`deb8dd4`).
