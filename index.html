@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bury it in the middle and the model won't find it</title>
+    <title>Put it in the middle. The model still has it. The model still misses it.</title>
     <meta
       name="description"
       content="An interactive explainer of the 'lost in the middle' effect: why facts placed in the middle of a long AI context are recalled far less reliably than facts at the start or end."
@@ -17,7 +17,7 @@
       </nav>
     </header>
     <main>
-      <h1>Bury it in the middle and the model won't find it</h1>
+      <h1>Put it in the middle. The model still has it. The model still misses it.</h1>
 
       <p class="lede">
         Whether a model uses a fact depends less on whether you included it
@@ -98,9 +98,10 @@
             <line x1="16" y1="144" x2="384" y2="144" class="chart-axis" />
           </svg>
           <figcaption>
-            Estimated recall across every position in a
-            <output id="length-value-2" for="length">20</output>-chunk context.
-            The marked point is where you put the fact.
+            Estimated recall by position in a
+            <output id="length-value-2" for="length">20</output>-chunk context
+            --- the dip is the effect. The marked point is where you put the
+            fact.
           </figcaption>
         </figure>
       </section>
@@ -129,9 +130,8 @@
           as more documents were added.
         </p>
         <p class="caveat">
-          <strong>A note on the numbers above:</strong> the curve you moved is
-          a hand-tuned illustrative model of that U shape, not the paper's own
-          measurements --- exact numbers vary by model, task and prompt, and
+          The curve you just moved is hand-tuned and illustrative, not the
+          paper's own measurements --- exact numbers vary by model, task and prompt, and
           the paper doesn't publish a single curve you could copy in here
           honestly. What does reliably hold, across the models it and later
           work have tested, is the shape: worse in the middle, a touch worse
