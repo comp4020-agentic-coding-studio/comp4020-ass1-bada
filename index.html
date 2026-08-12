@@ -108,9 +108,14 @@
       <section class="explainer" aria-labelledby="why-heading">
         <h2 id="why-heading">Why the middle loses</h2>
         <p>
-          Models built on attention don't scan a context evenly --- they
-          weigh some positions more than others, and in practice that weight
-          skews toward the start and the end. Liu et al.'s
+          The instinct when a model doesn't know something is to hand it
+          more: paste in another document, extend the chat history, retrieve
+          a few more search results. "Lost in the middle" is the inconvenient
+          finding that this can backfire --- the extra material mostly serves
+          to bury the one fact you needed in the position the model reads
+          worst. Models built on attention don't scan a context evenly ---
+          they weigh some positions more than others, and in practice that
+          weight skews toward the start and the end. Liu et al.'s
           <a
             href="https://arxiv.org/abs/2307.03172"
             target="_blank"
