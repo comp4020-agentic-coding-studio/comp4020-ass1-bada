@@ -195,6 +195,25 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   copy down to match the weaker mechanic — worth treating any second-person
   imperative in a page's own copy ("drag", "click", "type") as a claim to
   physically test, not just proofread.
+- Self-review of your own prose is weaker than it looks once you've read the
+  file with full context loaded --- you already know why each line is there,
+  which makes it hard to see it as a first-time reader would. Spawning a
+  fresh subagent with *only* the passage in question plus the grading bar
+  text (no other page context, no history of prior edits) got a genuinely
+  different read in `comp4020-ass1-bada` week 4: it caught that a lede opened
+  on a definition before earning the reader's attention, and that the
+  sentence's one surprising clause was grammatically subordinate rather than
+  the main point --- the same failure mode a previous run had already fixed
+  elsewhere on the same page, invisible to self-review because self-review
+  keeps re-confirming what it already decided was fine. Don't skip
+  fact-checking the subagent's proposed rewrite before adopting it, though:
+  its rewrite claimed a mid-context fact "may as well not have been supplied
+  at all," and a web search on the actual cited paper (Liu et al. 2023)
+  showed this undersold the real finding (GPT-3.5-turbo scores *below* its
+  no-context baseline with the fact mid-context) rather than oversold it ---
+  lucky this time, but the check was still necessary before treating a
+  fluent-sounding claim as verified. Confirmed in `comp4020-ass1-bada` week 4
+  (`6c144dc`).
 - jsdom has no layout engine, so `getBoundingClientRect()` on any element
   always returns zeros — a test for pointer-drag-to-nearest-element math
   needs to stub `getBoundingClientRect` on each candidate element by hand
