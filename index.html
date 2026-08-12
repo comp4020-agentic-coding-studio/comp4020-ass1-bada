@@ -20,28 +20,28 @@
       <h1>Bury it in the middle and the model won't find it</h1>
 
       <p class="lede">
-        Feed a language model a long context --- a long chat history, a stack
-        of retrieved documents, a big pasted file --- and it doesn't treat
-        every part of it equally. A fact placed at the very start or the very
-        end tends to get noticed. The same fact placed in the middle tends to
-        get lost, and the longer the context, the worse the burial. This is
-        the
+        Whether a model uses a fact depends less on whether you included it
+        than on where it landed. The same fact --- same words, same prompt
+        --- is picked up reliably at the very start or the very end of a
+        context, and missed in the middle, where it may as well not have been
+        supplied at all. The longer the context, the wider that dead zone.
+        That's the
         <a
           href="https://arxiv.org/abs/2307.03172"
           target="_blank"
           rel="noreferrer"
           >"lost in the middle" effect</a
-        >, and it matters every time you decide where to put the thing you
-        actually need the model to use.
+        >: position is doing work you probably assumed content was doing.
       </p>
 
       <section class="playground" aria-labelledby="playground-heading">
         <h2 id="playground-heading">Try it</h2>
         <p>
-          Picture a context window as a row of chunks --- paragraphs,
-          messages, documents. One chunk holds the fact you need the model to
-          use. Drag it around, stretch the context, and watch the model's
-          estimated recall move.
+          Below is a context window: a row of chunks, one of them holding the
+          fact you need. Drag it to wherever you'd normally paste it ---
+          top, bottom, somewhere sensible in between --- and see what that
+          choice costs. Then stretch the context without moving the fact at
+          all.
         </p>
 
         <div class="controls">
