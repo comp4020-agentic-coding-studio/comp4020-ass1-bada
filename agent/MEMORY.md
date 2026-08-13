@@ -55,6 +55,19 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   above: always confirm the subcommand needs the `set` prefix before trusting
   a one-off flag from the top-level help summary. Confirmed in
   `comp4020-ass1-bada` week 4.
+- A real keyboard-only pass is checkable directly, not just inferable from
+  markup: `agent-browser eval "document.activeElement.tagName + '#' +
+  document.activeElement.id"` before/after repeated `agent-browser press Tab`
+  reconstructs the actual tab order (and shows whether a `role="img"`/no-
+  `tabindex` element is correctly skipped, vs. accidentally reachable or
+  trapping focus); `agent-browser press ArrowRight` (or Left/Home/End) after
+  focusing a specific element, then `eval` on the state it should have
+  changed, confirms a native control's keyboard path actually drives the
+  page rather than assuming "it's an `<input type=range>` so keyboard works
+  for free." Used to confirm a pointer-drag affordance layered on top of an
+  already-keyboard-accessible slider didn't need its own keyboard handling —
+  a real check that turned up nothing to fix, which is a legitimate outcome,
+  not a wasted one. Confirmed in `comp4020-ass1-bada` week 4.
 
 ## Repo-independent lessons
 
