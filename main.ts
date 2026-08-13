@@ -46,6 +46,12 @@ function toPercent(value: number): string {
   return `${Math.round(value * 100)}%`;
 }
 
+/** Where `oldPosition` (0-based, out of `oldLength`) lands in a context resized to `newLength`, keeping its relative place (start stays start, end stays end) rather than its raw index — so stretching the context doesn't itself drag the fact toward the middle. */
+export function rescalePosition(oldPosition: number, oldLength: number, newLength: number): number {
+  const normalized = oldLength <= 1 ? 0 : oldPosition / (oldLength - 1);
+  return Math.round(normalized * (newLength - 1));
+}
+
 /** Wires the sliders, chunk row, readout and chart to the recall model. Exported so tests can drive it against a JSDOM document without a real browser. */
 export function setup(doc: Document): void {
   const lengthInput = doc.getElementById("length") as HTMLInputElement | null;
@@ -84,7 +90,18 @@ export function setup(doc: Document): void {
     renderChart(chart, curveForLength(length), position);
   }
 
-  lengthInput.addEventListener("input", render);
+  lengthInput.addEventListener("input", () => {
+    if (!lengthInput || !positionInput) return;
+    const oldLength = Number(positionInput.max) + 1;
+    const oldPosition = Number(positionInput.value);
+    const newLength = Number(lengthInput.value);
+    // Widen `max` before assigning the rescaled value — a range input clamps
+    // an assigned value to its *current* max, so setting the new value first
+    // would silently clamp it back to the old range.
+    positionInput.max = String(newLength - 1);
+    positionInput.value = String(rescalePosition(oldPosition, oldLength, newLength));
+    render();
+  });
   positionInput.addEventListener("input", render);
 
   // The row of chunks is draggable too: press anywhere on it and the key

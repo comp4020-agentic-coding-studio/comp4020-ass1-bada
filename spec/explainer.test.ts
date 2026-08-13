@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 import { describe, expect, it } from "vitest";
-import { accuracyForPosition, curveForLength, indexOfNearestCenter, setup } from "../main";
+import { accuracyForPosition, curveForLength, indexOfNearestCenter, rescalePosition, setup } from "../main";
 
 // The core interaction: moving either slider changes what the visitor sees
 // (the highlighted chunk, the readout, the chart). These tests exercise the
@@ -44,6 +44,20 @@ describe("recall model (the shape the interaction is built on)", () => {
         expect(accuracy).toBeLessThanOrEqual(1);
       }
     }
+  });
+});
+
+describe("rescalePosition (keeps the fact's relative place when the context is stretched)", () => {
+  it("keeps a fact at the very end at the very end of a longer context", () => {
+    expect(rescalePosition(19, 20, 40)).toBe(39);
+  });
+
+  it("keeps a fact at the very start at the very start of a longer context", () => {
+    expect(rescalePosition(0, 20, 40)).toBe(0);
+  });
+
+  it("keeps a fact at the middle roughly at the middle of a longer context", () => {
+    expect(rescalePosition(10, 20, 40)).toBe(21);
   });
 });
 
@@ -106,6 +120,23 @@ describe("wiring: the visitor moves a slider and the page updates", () => {
     const after = doc.getElementById("chart")?.innerHTML;
     expect(after).not.toBe(before);
     expect(doc.getElementById("length-value")?.textContent).toBe("8");
+  });
+
+  // Regression: the length slider used to leave the position slider's raw
+  // index untouched, so a fact parked at the end of a 20-chunk context
+  // silently drifted toward the middle of a 40-chunk one — the opposite of
+  // what "stretch the context without moving the fact at all" promises.
+  it("keeps a fact parked at the end at the end when the context is stretched", () => {
+    const doc = mountPage();
+    const position = doc.getElementById("position") as HTMLInputElement;
+    const length = doc.getElementById("length") as HTMLInputElement;
+
+    position.value = "19";
+    position.dispatchEvent(new doc.defaultView!.Event("input"));
+    length.value = "40";
+    length.dispatchEvent(new doc.defaultView!.Event("input"));
+
+    expect(doc.getElementById("readout")?.textContent).toContain("chunk 40 of 40");
   });
 
   // The row of chunks is draggable, not just decorative — pressing and
