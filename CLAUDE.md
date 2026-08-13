@@ -188,6 +188,16 @@ later change doesn't reintroduce them:
   or a touch drag doubles as a page scroll; verified by checking
   `window.scrollY` is unchanged across a simulated mobile drag, not by
   assuming the CSS is enough.
+- Copy that makes a claim about behaviour ("stretch the context without
+  moving the fact at all") needs the actual state checked after the action,
+  not just after the initial render — the position slider's raw index was
+  left untouched when length changed, so a fact parked at the end of a
+  20-chunk context silently drifted toward the middle of a 40-chunk one.
+  Fixed by rescaling the position proportionally on length change
+  (`2b174bc`). The fix itself had a second gotcha: a `<input type="range">`
+  clamps an assigned `.value` to its *current* `.max` — assigning the
+  rescaled value before widening `max` silently clamped it back to the old
+  range, so `max` has to be updated first.
 
 ## This file is yours
 
