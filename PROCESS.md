@@ -1,85 +1,68 @@
 # Process overview
 
-<!-- TEMPLATE: this file is a shape to fill in, not a form. Replace everything
-     in it with your own overview, and delete this comment — `pnpm
-     check:evidence` will remind you if it's still here. -->
-
-A reading-guide to how the work came together --- a map to your process, not an
-essay about it. Markers read this file and follow its citations; they don't
-trawl the repo for evidence you didn't point at, so if a moment mattered, cite
-it.
-
-This file is the shape; the course site's
-[assessment page](https://comp.anu.edu.au/courses/comp4020-agentic-coding-studio/topics/assessment/#what-you-submit)
-is the requirement, and its
-[word counts](https://comp.anu.edu.au/courses/comp4020-agentic-coding-studio/topics/assessment/#word-counts)
-cover every deliverable.
-
 ## What I built
 
-One paragraph: the thing, and the idea behind it.
+A one-idea explainer of the "lost in the middle" effect: LLMs recall facts
+planted at the start or end of a long context more reliably than facts buried
+in its middle. Two sliders control context length and where the target fact
+sits; a chunk row, a readout, and a small chart all update in lockstep so the
+one mechanic — drag the fact around a context and watch retrieval odds
+change — carries the whole page.
 
 ## The moments that mattered
 
-Three or four for an assignment; fewer is fine for a weekly prototype. Keep the
-list short so each moment has room to do all four jobs:
+**1. A static-HTML a11y annotation that a live render silently broke.**
+`renderChart` rebuilt the whole SVG's `innerHTML` on every slider move,
+quietly deleting the `<title>`/`<desc>` its `aria-labelledby` pointed at —
+invisible to jsdom, which mounts a bare fixture, never the real page. A
+real-browser `axe-core` run (`agent-browser eval --stdin`) caught it as
+`svg-img-alt`, and the same run surfaced light-theme text under 4.5:1
+contrast. Fixed by re-emitting the title/desc inside the template on every
+render and darkening the failing colours, then added a jsdom regression test
+asserting they survive a render — the harness now catches this itself.
+[`9a95b1a`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/9a95b1a5322663a6790f19f1a558ca79ca135603)
 
-1. **what happened** --- the problem, or the thing that went wrong
-2. **what you did instead of the obvious thing** --- the call you made, and why
-   it beat the obvious one
-3. **how you knew it was right** --- the check you ran, the viewport you looked
-   at, what you read before accepting the diff
-4. **the citation** --- a commit or commit range, a `CLAUDE.md` change, a check
-   that went from red to green, a prompt paired with the commit it produced
+**2. Checking the slow-connection state instead of assuming JS covers it.**
+Nothing forces a check of what a page shows before its script loads, so
+skipping it was the easy default. Instead I used `agent-browser network
+route "**/main.ts" --abort` to hold the page in its pre-JS state: the
+sliders, readout, and chart showed blank interpolation ("Context length:
+chunks") and empty boxes, not the default state a fast connection never
+reveals. Fixed by giving the static HTML the same computed defaults
+`render()` produces for the sliders' own default attribute values, so first
+paint is already correct.
+[`c009c90`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/c009c9023620384c9a49d04d8c0ca8226c0a9b27)
 
-Jobs 2 and 3 are the ones the repo can't tell a reader on its own, so they're
-where the marks are. The strongest moments are the ones where a correction
-landed in the **harness** --- the standards and checks your work has to satisfy
---- rather than in a retry: a rule added to `CLAUDE.md`, a check wired up, an
-attempt thrown away. Retrying until it passes is the routine case, and changing
-what the work runs against is the skilled one.
+**3. A green test that encoded an unverified assumption about the domain.**
+A spec test named "is symmetric around the middle of the context" passed
+reliably, which made it easy to leave alone. But the name is a claim about
+Liu et al.'s findings, not about my code, so I checked it against their real
+figures via web search instead of trusting the first draft's
+simplification — the true effect is an asymmetric primacy-over-recency U,
+not a clean symmetric one. Rewrote the model and prose to match, and
+replaced the test with one asserting the verified asymmetry rather than
+patching it to keep passing the wrong claim. Confirmed live at both marking
+viewports: start reads 87%, end reads 83%.
+[`cdd57e9`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/cdd57e9e381bd20070edb148d1320f5372aa82b1)
 
-Cite each moment as a link whose text is the commit hash or range and whose
-target is this repo's commit or compare URL, so a reader clicks straight to the
-evidence:
-
-- one commit: [`a1b2c3d`](https://github.com/YOUR-ORG/YOUR-REPO/commit/a1b2c3d)
-- a range:
-  [`a1b2c3d...e4f5a6b`](https://github.com/YOUR-ORG/YOUR-REPO/compare/a1b2c3d...e4f5a6b)
-
-To pair a prompt with the commit it produced, quote the prompt (curated, not a
-full transcript) next to the citation:
-
-> the prompt, verbatim
-
-Screenshots are welcome where one carries the verification better than a
-sentence does. Commit the file to this repo and link it with a **relative**
-path, which is what makes it render on GitHub: `![alt text](docs/before.png)`.
-Images don't count towards the word count and don't replace the citation.
-
-### A worked moment, for shape
-
-Delete this section along with the rest of the boilerplate --- it's here to show
-the four jobs in one paragraph, not to be imitated in content.
-
-> The date formatter kept coming back with `toLocaleDateString()` and no locale
-> argument, so the same build rendered differently on my machine and in CI. I'd
-> already re-prompted it twice, which fixed the line but not the habit, so the
-> third time I put the rule in `CLAUDE.md` instead
-> ([`3f9ac21`](https://github.com/YOUR-ORG/YOUR-REPO/commit/3f9ac21)) and added
-> a spec test that fails on a bare `toLocaleDateString`. That's what told me it
-> had actually taken: the test went red against the old code and green against
-> the new, and the next two features it wrote passed it without prompting
-> ([`3f9ac21...b7e0d14`](https://github.com/YOUR-ORG/YOUR-REPO/compare/3f9ac21...b7e0d14)).
+**4. Copy promising an interaction the markup never built.**
+The lede said "Drag it around" from the first commit; the only control was
+ever a range slider, and three prose-review passes read the markup and moved
+on without trying to drag anything. Caught only by opening the live page in
+`agent-browser` and attempting the literal action the copy described.
+Rather than weakening the copy to match the slider, I wired real pointer
+drag onto the chunk row (mouse and touch, `touch-action: none` so it doesn't
+hijack scroll), kept the sliders as the keyboard/AT-accessible path, and
+re-ran axe-core to confirm it stayed clean. Landed a `CLAUDE.md` rule
+afterward treating any second-person imperative in a page's own copy as a
+claim to physically test, not proofread — the correction is in the harness,
+not just the one line of copy.
+[`0dd2315`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-bada/commit/0dd231577f0746f8986dbf972d3df357fbe9ddcc)
 
 ## Before you ship
 
-`pnpm check:evidence` verifies your citations resolve to real commits, that the
-current reflection entry is in `reflections/`, and that your `CLAUDE.md` is
-there --- before a marker ever opens the file. It checks that your map is
-traceable, not that it is good: the marker judges whether your small,
-deliberately chosen set of moments shows real judgement and reflection. A green
-check is not a substitute for that curation.
-
-Images are deliberately not checked, because whether one renders is visible the
-moment you look. Open this file on GitHub and look at it before you ship.
+`pnpm check:evidence` confirms these citations resolve — it doesn't judge
+whether the four moments above are the right four. Each is a case where the
+obvious next step (accept the diff, patch the test, tighten the copy) would
+have shipped something subtly wrong, and a real-browser or literature check
+caught it first.
