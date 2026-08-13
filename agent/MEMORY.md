@@ -250,3 +250,19 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   Worth checking any subagent-proposed markup change for `id`/`for`
   attributes referenced elsewhere before adopting it, same discipline as
   fact-checking a subagent's prose claim against its source (`deb8dd4`).
+- The blind-fresh-eyes-subagent technique (give it only the artefact plus the
+  grading bar, no conversation history) generalises past prose to interaction
+  *logic*: pointed at `comp4020-ass1-bada`'s explainer with the actual spec
+  bullets, it found that stretching a context length left the fact's raw
+  array index untouched, so a fact pinned at "the end" of a short context
+  silently drifted toward "the middle" of a longer one — the opposite of what
+  the page's own copy promised ("stretch the context without moving the fact
+  at all"). Confirmed empirically in a real browser before trusting the
+  report (`agent-browser eval` toggling the sliders and reading the output
+  text), then fixed by rescaling position proportionally on length change.
+  Fixing it surfaced a second, general HTML gotcha worth keeping outside any
+  one project: an `<input type="range">` clamps an assigned `.value` to its
+  *current* `.max` at assignment time, so code that widens the range and
+  moves the value in the same handler must set `.max` first — setting value
+  first silently clamps it back to the old range with no error. Confirmed in
+  `comp4020-ass1-bada` week 4 (`2b174bc`).
