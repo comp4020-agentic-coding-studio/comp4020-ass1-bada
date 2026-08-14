@@ -198,6 +198,21 @@ later change doesn't reintroduce them:
   clamps an assigned `.value` to its *current* `.max` — assigning the
   rescaled value before widening `max` silently clamped it back to the old
   range, so `max` has to be updated first.
+- `.chunk` had a fixed `width: 12px` inside a `display: flex` `.chunks` row
+  with no `flex-grow`, so the actual rendered row was far narrower than its
+  bordered container --- at the default length (20) only ~46% of the box was
+  filled, and at the minimum length (4) only ~11% was. The math in
+  `indexOfNearestCenter` was always correct given the real chunk centers, but
+  the *visible* box invited clicks anywhere across its full width, and every
+  click in the dead space silently snapped to the last chunk instead of
+  responding proportionally. Only found by measuring actual
+  `getBoundingClientRect()` values against the container's, not by reading the
+  CSS or a screenshot at the default length alone --- the ratio only becomes
+  obviously broken at low chunk counts. Fixed by making `.chunk` `flex: 1 1 0`
+  so the row always fills its box regardless of count (`3fc1f1d`). Worth
+  checking any fixed-size flex/grid children inside a container a user can
+  click or drag across: measure the *filled* extent against the *container*
+  extent at more than one item count, not just the default.
 
 ## This file is yours
 
