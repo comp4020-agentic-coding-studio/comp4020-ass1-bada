@@ -213,6 +213,19 @@ later change doesn't reintroduce them:
   checking any fixed-size flex/grid children inside a container a user can
   click or drag across: measure the *filled* extent against the *container*
   extent at more than one item count, not just the default.
+- Re-verifying the resize-mid-drag check against the real production build
+  (`vite preview` on `dist/`, not the dev server) surfaced a testing gotcha,
+  not a site bug: a hand-built `PointerEvent` dispatched via
+  `document.dispatchEvent`/`window.dispatchEvent` does *not* route through
+  `chunks.setPointerCapture(event.pointerId)` — the listener on `#chunks`
+  never fires, so the drag silently doesn't move and the readout just holds
+  whatever the initial `pointerdown` set. That looked like a passing check
+  (no error, plausible-looking readout) until compared against the expected
+  chunk for the coordinates. `agent-browser mouse move/down/up` (real
+  synthetic input events, not constructed-and-dispatched ones) does respect
+  pointer capture and is the only reliable way to test a
+  `setPointerCapture`-based drag from this CLI. No site bug found once
+  tested correctly — the mid-drag resize still holds. Confirmed 2026-08-15.
 
 ## This file is yours
 
