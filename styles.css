@@ -110,7 +110,8 @@ h2 {
 }
 
 .chunk {
-  width: 12px;
+  flex: 1 1 0;
+  min-width: 8px;
   height: 24px;
   border-radius: 2px;
   background: var(--gridline);
