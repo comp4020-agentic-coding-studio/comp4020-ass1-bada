@@ -266,3 +266,17 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   moves the value in the same handler must set `.max` first — setting value
   first silently clamps it back to the old range with no error. Confirmed in
   `comp4020-ass1-bada` week 4 (`2b174bc`).
+- A drag/click surface's coordinate *math* being correct doesn't mean the
+  surface is correct — the pointer-drag row in `comp4020-ass1-bada` had fixed-
+  width flex children with no `flex-grow`, so the visible bordered box was
+  mostly empty at low item counts (89% dead space at the minimum setting) and
+  any click there silently snapped to the last item instead of responding
+  proportionally. `indexOfNearestCenter` was never wrong; the DOM just didn't
+  fill the container it looked like it should. Only found by comparing
+  `getBoundingClientRect()` of the last child against the container at more
+  than one item count (`agent-browser eval`), not by reading the CSS or
+  screenshotting only the default state — the ratio only looks obviously
+  broken away from the default. Fixed with `flex: 1 1 0` on the children
+  (`3fc1f1d`). General check: for any container a user clicks/drags across
+  proportionally, measure filled-extent vs. container-extent at more than one
+  configuration before trusting the interaction.
