@@ -68,6 +68,20 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   already-keyboard-accessible slider didn't need its own keyboard handling —
   a real check that turned up nothing to fix, which is a legitimate outcome,
   not a wasted one. Confirmed in `comp4020-ass1-bada` week 4.
+- A hand-built `new PointerEvent(...)` dispatched via `agent-browser eval`
+  with `document.dispatchEvent`/`window.dispatchEvent` does NOT route through
+  a prior `element.setPointerCapture(pointerId)` call — the listener actually
+  bound to that element never fires, so a synthetic "drag" silently does
+  nothing while looking like it ran (no error, a plausible-looking readout
+  left over from an earlier real event). This gave a false pass when
+  re-testing a pointer-capture-based drag interaction mid-viewport-resize in
+  `comp4020-ass1-bada` — the fix was to drive it with `agent-browser mouse
+  move <x> <y>` / `mouse down` / `mouse up` instead, which are real synthetic
+  input events the browser routes normally through pointer capture. Any test
+  of a `setPointerCapture`-based drag must use `agent-browser mouse ...`, not
+  a constructed-and-dispatched `PointerEvent`. Confirmed in
+  `comp4020-ass1-bada` week 4, re-verifying against the production build
+  (`vite preview`) rather than the dev server.
 
 ## Repo-independent lessons
 
