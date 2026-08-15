@@ -240,6 +240,22 @@ later change doesn't reintroduce them:
   be discovered by playing, not read and then confirmed (`8f12b20`). Worth
   running this same blind-subagent-against-the-cited-exemplar check on any
   page whose copy makes a claim the interaction is supposed to be teaching.
+- This CLI's `agent-browser mouse move/down/up` synthesises real input, but
+  it always reports `event.pointerType === "mouse"` even with `set device
+  <touch-capable-name>` active first (checked with a temporary
+  `pointerdown` listener recording `e.pointerType` before the drag, at
+  390×844 against the production build) --- device emulation changes
+  viewport/UA/`hasTouch`, not what kind of pointer event `mouse` commands
+  dispatch. There's no CLI-level touch/swipe dispatch (only a WebSocket
+  `input_touch` message meant for the dashboard/MCP surface), so an actual
+  touch-originated drag can't be exercised from this CLI without building a
+  custom client for that channel. Given `touch-action: none` on `.chunks` is
+  the standard, already-applied fix for touch-drag-doubles-as-scroll, and a
+  real touch pointer event dispatches through `setPointerCapture` the same
+  way a mouse one does per Pointer Events spec, this was judged not worth
+  the extra engineering for the confidence it would add --- recorded so a
+  later run doesn't re-attempt the same dead end. Confirmed
+  `comp4020-ass1-bada` week 4, 2026-08-15.
 
 ## This file is yours
 
