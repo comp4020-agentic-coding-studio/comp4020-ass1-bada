@@ -1,77 +1,69 @@
 # now
 
-## State as of this run (2026-08-15, ~39h to cutoff, assignment 1)
+## State as of this run (2026-08-16 08:00 AEST, 28h to cutoff, assignment 1)
 
-`comp4020-ass1-bada` --- individual prototype, due noon Mon 17 Aug 2026. Brief
-re-confirmed against the live assignment-1.json (unchanged since last read).
-Still well outside 24h (24h mark is noon Sun 16 Aug), so a **deepen** run.
+`comp4020-ass1-bada` --- individual prototype, due noon Mon 17 Aug 2026.
+Re-fetched `assignment-1.json`: brief, exemplars, and marking bands unchanged
+from prior reads.
 
-- Ran `pnpm check` first: clean, 30/30, matched origin (`git fetch` +
-  `git status`, not assumed).
-- Picked up the prior hand-off's one open "fresh well" idea: actually
-  exercise the touch-drag path at 390×844 against the production build,
-  rather than only the desktop mouse path already verified.
-- Result: this CLI genuinely can't do it. `agent-browser mouse move/down/up`
-  dispatches real input events (unlike a constructed-and-dispatched
-  `PointerEvent`, see the `2a4954c` lesson), but even with
-  `set device "iPhone 15"` active first, a temporary `pointerdown` listener
-  recording `e.pointerType` showed it's always `"mouse"` --- device emulation
-  changes viewport/UA/`hasTouch`, not what the CLI's `mouse` commands
-  dispatch. The only touch-capable channel is a WebSocket `input_touch`
-  message meant for the dashboard/MCP surface, not a plain CLI subcommand ---
-  building a client for that is real extra engineering for a check that's
-  mostly confirmatory (`touch-action: none` on `.chunks` is already the
-  standard fix, already applied, and Pointer Events spec routes touch through
-  `setPointerCapture` the same way mouse does). Judged not worth it; recorded
-  in `CLAUDE.md` (`8aa735a`) so a later run doesn't retry the same dead end.
-- While the preview server was up anyway, ran `agent-browser a11y --json`
-  (the CLI's built-in axe-core wrapper --- didn't need the manual
-  axe.min.js-injection trick this time) against the production build at both
-  390×844 and 1920×1080: **zero violations, zero incomplete, both
-  viewports** --- confirms the lede copy-only edit (`8f12b20`) and the
-  touch-action CSS didn't regress accessibility. A clean, useful re-check,
-  not a wasted one.
-- Did not touch PROCESS.md, reflections/, or any interaction code this run
-  --- nothing found warranted a code change. Working tree clean, pushed?
-  **No** --- doctrine pushes at the finishing pass, not before. Confirmed
-  locally clean and matching origin at start of run only (this run's own
-  commit `8aa735a` is local-only right now, not yet pushed).
+Prior run (39h mark) had already confirmed the verification-methodology well
+was dry --- nothing fresh to check without a code change, and the touch-
+dispatch idea was a confirmed dead end (recorded in `CLAUDE.md`). With no new
+deepen work available and only ~4h of runway left before the doctrine's 24h
+"finish" boundary, I judged it lower-risk to close out the one clear
+remaining gap now rather than wait for the exact clock mark:
+
+- **Wrote `reflections/assignment-1.md`** (287 words, both standing prompts).
+  Breakthrough: the blind-subagent-vs-cited-exemplar catch on the lede
+  (`8f12b20`) --- picked over the touch-dispatch/verification-methodology
+  candidates because it's the one finding driven by checking the brief's own
+  language (the *Mechanical Watch* ceiling quote) rather than a testing
+  technique, so it speaks to "response to the brief" (35%) as well as
+  process. What-it-changed: prose review as testable-claim-checking, not
+  proofreading, tying back to the domain-property-test lesson (`cdd57e9`).
+  This doubles as the crit-03 retro entry per doctrine; no second write
+  needed. Commit `8e7c202`.
+- **Resolved the open PROCESS.md question**: left its four moments
+  (`118b16a`) untouched rather than swapping the lede-catch in. Reasoning:
+  the current four are diverse failure modes (a11y bug, perf/slow-connection,
+  domain-correctness test, copy-vs-build mismatch); adding the lede-catch
+  would have meant two "copy" moments and no obvious weakest of the current
+  four to cut. The lede-catch gets its full weight in the reflection instead,
+  which is where the assignment brief specifically wants it (the retro
+  reads the reflection, not PROCESS.md).
+- **Ran `pnpm check`** (30/30 tests, typecheck/build/lint clean) and
+  **`pnpm check:evidence`** (both reflection filename and all 4 PROCESS.md
+  citations resolve) before committing --- both green.
+- **Pushed** `8e7c202` to origin (`git fetch` confirmed matched after; not
+  assumed).
+- **Checked the live Pages URL**: `curl` on
+  `https://comp4020-agentic-coding-studio.github.io/comp4020-ass1-bada/`
+  returns 404. Expected, not a problem --- doctrine confirms CI/Pages stays
+  skipped while the repo is private, and this repo hasn't shipped (gone
+  public) yet. Don't read a 404 here as a bug until *after* the repo is
+  public and a deploy has actually run.
 
 ## Single most important next action
 
-Still not inside 24h. State to hand off:
+Almost everything that doctrine calls a "finishing step" is now done early:
+reflection written, PROCESS.md moments finalised, `pnpm check` +
+`check:evidence` green, pushed. What's left, for the run that actually sits
+inside the last 24h (24h mark is noon Sun 16 Aug 2026, ~4h after this run):
 
-1. **`reflections/assignment-1.md` still doesn't exist.** This is the only
-   real remaining gap blocking "shipped." Write it at the finishing pass:
-   150--300 words, both standing prompts (breakthrough + what this changed
-   about the developer you want to be), doubles as the crit-03 retro. Leading
-   candidate breakthrough is still the blind-subagent-vs-cited-exemplar catch
-   (`8f12b20`) --- it's the only finding driven by checking the brief's own
-   language rather than a testing-methodology gap, and it speaks to the
-   "response to the brief" criterion (35%) rather than "process" (45%).
-2. **PROCESS.md still has its original four moments, untouched** (`118b16a`):
-   a11y title/desc, slow-connection static defaults, domain-property test,
-   drag-copy-never-built. Whether the lede-catch (`8f12b20`) replaces the
-   weakest of these or stays reflection-only is still an open call for the
-   finishing pass --- don't decide early, decide once at the end with the
-   full set of candidates in view.
-3. **Verification-methodology well is now dry, including the touch-specific
-   idea.** Confirmed this run: real touch dispatch isn't reachable from this
-   CLI without disproportionate extra engineering. Don't re-attempt it, and
-   don't re-run dev-vs-prod, resize-mid-drag, keyboard-nav, or a11y checks
-   again unless `main.ts`/`index.html`/`styles.css`/`vite.config.ts` change.
-4. **If a future deepen-phase run before 24h wants a genuinely fresh check**,
-   the wells drawn from so far: named-marking-bar-item testing,
-   production-build re-verification, blind-subagent-vs-exemplar comparison,
-   and now touch-dispatch feasibility. Nothing obvious left in this vein ---
-   if nothing fresh turns up, it's fine for a deepen run to conclude "checked,
-   found nothing to fix" (as this one did) rather than manufacture busywork.
-   One real option if the brief/spec changes on a future fetch: re-read it
-   fully again, since it's re-fetched every run and could in principle drift.
-5. **Once genuinely inside the last ~24h**, do the finishing-steps pass in
-   one run: resolve the PROCESS.md moment question above, write
-   `reflections/assignment-1.md`, run `pnpm check` once clean, `/ship` (or
-   equivalent push + verify), and check the *live* Pages URL at both
-   viewports (not just local `vite preview`) before stopping.
-6. Don't touch `comp4020-crit2-bada` or any other sibling repo from inside
+1. **Don't re-open the PROCESS.md/reflection content decision.** It's made;
+   re-litigating it burns the little deepen-runway left for no reason.
+2. **Once the repo has actually shipped (gone public) and Pages has deployed**,
+   check the *live* URL at both marking viewports (1920×1080, 390×844) in
+   `agent-browser` --- not just `vite preview` locally, which has already
+   been checked repeatedly. This is the one check that genuinely cannot be
+   done before shipping, so it's the one legitimate reason to open the
+   browser again close to cutoff.
+3. **If CI actually runs post-ship**, watch for the `check`/`deploy` jobs
+   going green within the window before the crit sweep (fifteen minutes
+   after cutoff) --- still running counts as not green.
+4. **If a fresh code change happens between now and cutoff** (unlikely, the
+   well is dry), re-run the relevant `agent-browser` check from the list
+   already exhausted (a11y, resize-mid-drag, keyboard nav, slow-connection
+   static defaults) rather than assuming it still holds.
+5. Don't touch `comp4020-crit2-bada` or any other sibling repo from inside
    this run --- only this deliverable's window is open right now.

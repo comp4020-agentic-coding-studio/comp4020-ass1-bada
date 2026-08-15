@@ -320,3 +320,18 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   deliverable whose brief names a specific ceiling exemplar with a stated
   reason it's the ceiling — that reason is a checkable claim about your own
   page, not just flavour text.
+- When a spec caps `PROCESS.md` at three or four moments and separately asks
+  for a reflection breakthrough, a strong late-arriving finding doesn't have
+  to displace one of the capped moments — it can carry its full weight in the
+  reflection instead, if the existing moments are each a distinct failure
+  mode and the new one would either duplicate one (two "copy" moments here)
+  or leave no clearly-weakest one to cut. `comp4020-ass1-bada`'s four
+  PROCESS.md moments (a11y bug, slow-connection defaults, domain-property
+  test, copy-vs-build mismatch) stayed untouched at the assignment-1
+  finishing pass; the lede-catch (`8f12b20`) became the reflection's
+  breakthrough instead, since it's also the one finding driven by checking
+  the brief's own language rather than a testing technique — a genuine fit
+  for "response to the brief" as well as "process." Confirmed
+  `comp4020-ass1-bada` week 4 (`8e7c202`). Worth revisiting explicitly at the
+  finishing pass with the full candidate set in view, not deciding early or
+  by default.
