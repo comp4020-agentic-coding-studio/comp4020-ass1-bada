@@ -1,99 +1,77 @@
 # now
 
-## State as of this run (2026-08-15, ~45h to cutoff, assignment 1)
+## State as of this run (2026-08-15, ~39h to cutoff, assignment 1)
 
 `comp4020-ass1-bada` --- individual prototype, due noon Mon 17 Aug 2026. Brief
-re-confirmed against the live assignment-1.json (unchanged). Still well
-outside 24h, so a **deepen** run. Prior hand-off flagged that the
-verification-methodology and prose-polish wells were both drained, and
-suggested a genuinely fresh angle: compare the live page against the brief's
-cited "genre ceiling" exemplar (Ciechanowski's *Mechanical Watch*, "every part
-is manipulable and the explanation *is* the interaction") for interaction
-fidelity --- aimed at the 35% "response to the brief" criterion rather than
-the 45% process criterion this repo had spent most of its deepen time on.
+re-confirmed against the live assignment-1.json (unchanged since last read).
+Still well outside 24h (24h mark is noon Sun 16 Aug), so a **deepen** run.
 
-- Ran `pnpm check` first: clean, 30/30 tests, matched origin, nothing to pick
-  up.
-- Took that fresh angle. Gave a **blind fresh-eyes subagent** (no other
-  context) only the page's actual text and mechanic plus the exemplar quote,
-  and asked: does the interaction carry any of the explanation, or would a
-  reader lose nothing by skipping "Try it" and only reading the prose?
-- Verdict: **no** --- the lede pre-stated the full U-shape finding (start/end
-  good, middle bad, worse as context grows) *before* the interactive section,
-  so "Try it" only ever confirmed what the reader had already been told in
-  words. This is a real gap against the cited bar, not an invented one.
-- Fixed with a scoped copy edit only (no new interaction, no new sections):
-  stripped the explicit claim out of the lede, replaced it with a hook
-  ("can be picked up reliably or missed entirely depending only on where...
-  Drag the fact around below and see for yourself where it costs you"). The
-  explicit U-shape claim already lives in "Why the middle loses", which
-  already sits *after* the interactive section --- so the hook now has to be
-  discovered by playing, then confirmed in prose, not the reverse.
-  [`8f12b20`](8f12b20)
-- Re-ran `pnpm check` (clean, 30/30) and sanity-checked the rendered text in
-  a real browser (`vite preview` + `agent-browser eval` reading
-  `.lede.textContent`) before committing --- no console errors, text matches
-  the intended edit.
-- Recorded the lesson in this repo's `CLAUDE.md` (`de8ae94`): checking a
-  page's copy directly against the brief's cited exemplar with a blind
-  subagent is a repeatable technique, distinct from (but sibling to) the
-  earlier "copy promises an interaction that was never built" catch
-  (`0dd2315`) --- this one is "copy pre-empts what the interaction was
-  supposed to teach."
-- Did **not** touch PROCESS.md's four locked moments this run (deliberately
-  --- see below) or write the reflection yet. Working tree clean, not pushed
-  (matches doctrine: push happens at the finishing pass). Checked with
-  `git fetch` + `git status`, not assumed.
+- Ran `pnpm check` first: clean, 30/30, matched origin (`git fetch` +
+  `git status`, not assumed).
+- Picked up the prior hand-off's one open "fresh well" idea: actually
+  exercise the touch-drag path at 390×844 against the production build,
+  rather than only the desktop mouse path already verified.
+- Result: this CLI genuinely can't do it. `agent-browser mouse move/down/up`
+  dispatches real input events (unlike a constructed-and-dispatched
+  `PointerEvent`, see the `2a4954c` lesson), but even with
+  `set device "iPhone 15"` active first, a temporary `pointerdown` listener
+  recording `e.pointerType` showed it's always `"mouse"` --- device emulation
+  changes viewport/UA/`hasTouch`, not what the CLI's `mouse` commands
+  dispatch. The only touch-capable channel is a WebSocket `input_touch`
+  message meant for the dashboard/MCP surface, not a plain CLI subcommand ---
+  building a client for that is real extra engineering for a check that's
+  mostly confirmatory (`touch-action: none` on `.chunks` is already the
+  standard fix, already applied, and Pointer Events spec routes touch through
+  `setPointerCapture` the same way mouse does). Judged not worth it; recorded
+  in `CLAUDE.md` (`8aa735a`) so a later run doesn't retry the same dead end.
+- While the preview server was up anyway, ran `agent-browser a11y --json`
+  (the CLI's built-in axe-core wrapper --- didn't need the manual
+  axe.min.js-injection trick this time) against the production build at both
+  390×844 and 1920×1080: **zero violations, zero incomplete, both
+  viewports** --- confirms the lede copy-only edit (`8f12b20`) and the
+  touch-action CSS didn't regress accessibility. A clean, useful re-check,
+  not a wasted one.
+- Did not touch PROCESS.md, reflections/, or any interaction code this run
+  --- nothing found warranted a code change. Working tree clean, pushed?
+  **No** --- doctrine pushes at the finishing pass, not before. Confirmed
+  locally clean and matching origin at start of run only (this run's own
+  commit `8aa735a` is local-only right now, not yet pushed).
 
 ## Single most important next action
 
-Still not inside 24h (cutoff is noon Mon 17 Aug; 24h mark is noon Sun 16
-Aug). State to hand off:
+Still not inside 24h. State to hand off:
 
-1. **New open question for the finishing pass**: is this run's finding (the
-   lede-spoils-the-interaction catch, `8f12b20`/`de8ae94`) a stronger
-   PROCESS.md moment or reflection breakthrough than any of the current
-   four/three candidates? It's arguably the most novel of the lot --- it's
-   the first finding this repo has made that's driven by a **blind subagent
-   checked against the brief's own cited exemplar**, rather than a
-   real-browser/jsdom testing gap or a literature check. It also speaks
-   directly to the "response to the brief" criterion (35%) rather than the
-   "process" criterion (45%) the other four all serve. Don't decide now ---
-   weigh it at the finishing pass, same as the still-open `3fc1f1d`
-   chunk-fill question from two runs ago.
+1. **`reflections/assignment-1.md` still doesn't exist.** This is the only
+   real remaining gap blocking "shipped." Write it at the finishing pass:
+   150--300 words, both standing prompts (breakthrough + what this changed
+   about the developer you want to be), doubles as the crit-03 retro. Leading
+   candidate breakthrough is still the blind-subagent-vs-cited-exemplar catch
+   (`8f12b20`) --- it's the only finding driven by checking the brief's own
+   language rather than a testing-methodology gap, and it speaks to the
+   "response to the brief" criterion (35%) rather than "process" (45%).
 2. **PROCESS.md still has its original four moments, untouched** (`118b16a`):
    a11y title/desc, slow-connection static defaults, domain-property test,
-   drag-copy-never-built. Whether this run's finding replaces one of them or
-   becomes a genuine fifth (doctrine says "three or four moments" --- lean
-   toward replacing the weakest, not adding a fifth) is the open call above.
-3. **Verification-methodology thread is still done** --- don't re-run
-   dev-vs-production-build, resize-mid-drag, slow-connection, keyboard-nav,
-   or contrast checks again unless `main.ts`/`index.html`/`styles.css`/
-   `vite.config.ts` change in ways that could affect them. This run's
-   `index.html` change was copy-only inside the existing `<p class="lede">`,
-   no markup/behaviour change, so those checks don't need re-running because
-   of it.
-4. **Only real remaining gap: `reflections/assignment-1.md` doesn't exist
-   yet.** Blocks "shipped" outright. Write it at the finishing pass per
-   doctrine: 150--300 words, both standing prompts, doubles as the crit-03
-   retro (doctrine's `related` → `crits/03-a1-retro`). Candidate
-   breakthroughs, in rough strength order after this run: the new
-   blind-subagent-vs-exemplar catch (`8f12b20`), the `0dd2315` drag-copy
-   catch, the `2b174bc` rescale catch, or the `3fc1f1d` dead-space catch.
-   Pick whichever is strongest by finishing time.
-5. **If a future deepen-phase run wants a substantive check before the 24h
-   mark**, the wells drawn from so far are: named-marking-bar-item testing,
-   production-build re-verification, and now blind-subagent-vs-exemplar
-   comparison (this run). A genuinely fresh idea for next time, if one is
-   needed: actually try the site on a real phone-sized touch device (or at
-   minimum re-verify the touch-drag path specifically at 390×844 with
-   `agent-browser`'s touch/mouse emulation, not just checked at desktop) ---
-   the a11y/keyboard/contrast/drag checks so far have mostly exercised
-   desktop mouse and slider paths.
-6. **Once genuinely inside the last ~24h**, do the finishing-steps pass in
+   drag-copy-never-built. Whether the lede-catch (`8f12b20`) replaces the
+   weakest of these or stays reflection-only is still an open call for the
+   finishing pass --- don't decide early, decide once at the end with the
+   full set of candidates in view.
+3. **Verification-methodology well is now dry, including the touch-specific
+   idea.** Confirmed this run: real touch dispatch isn't reachable from this
+   CLI without disproportionate extra engineering. Don't re-attempt it, and
+   don't re-run dev-vs-prod, resize-mid-drag, keyboard-nav, or a11y checks
+   again unless `main.ts`/`index.html`/`styles.css`/`vite.config.ts` change.
+4. **If a future deepen-phase run before 24h wants a genuinely fresh check**,
+   the wells drawn from so far: named-marking-bar-item testing,
+   production-build re-verification, blind-subagent-vs-exemplar comparison,
+   and now touch-dispatch feasibility. Nothing obvious left in this vein ---
+   if nothing fresh turns up, it's fine for a deepen run to conclude "checked,
+   found nothing to fix" (as this one did) rather than manufacture busywork.
+   One real option if the brief/spec changes on a future fetch: re-read it
+   fully again, since it's re-fetched every run and could in principle drift.
+5. **Once genuinely inside the last ~24h**, do the finishing-steps pass in
    one run: resolve the PROCESS.md moment question above, write
-   `reflections/assignment-1.md`, run `pnpm check` once clean, `/ship`, and
-   verify the *live* Pages URL at both viewports (not just local
-   `vite preview`) before stopping.
-7. Don't touch `comp4020-crit2-bada` or any other sibling repo from inside
+   `reflections/assignment-1.md`, run `pnpm check` once clean, `/ship` (or
+   equivalent push + verify), and check the *live* Pages URL at both
+   viewports (not just local `vite preview`) before stopping.
+6. Don't touch `comp4020-crit2-bada` or any other sibling repo from inside
    this run --- only this deliverable's window is open right now.

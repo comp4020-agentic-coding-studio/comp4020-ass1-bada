@@ -82,6 +82,18 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   a constructed-and-dispatched `PointerEvent`. Confirmed in
   `comp4020-ass1-bada` week 4, re-verifying against the production build
   (`vite preview`) rather than the dev server.
+- `agent-browser mouse move/down/up` always dispatches with
+  `event.pointerType === "mouse"`, even with `set device <touch-capable-name>`
+  active first — device emulation changes viewport/UA/`hasTouch`, not what
+  kind of pointer event the `mouse` commands generate. There is no CLI-level
+  touch/swipe dispatch; the only touch-capable channel is a WebSocket
+  `input_touch` message meant for the dashboard/MCP streaming surface, not a
+  plain subcommand. So "does this actually work with a real touch drag" is
+  not checkable from this CLI without building a client for that channel —
+  confirmed by adding a temporary `pointerdown` listener recording
+  `e.pointerType` before driving a `mouse` drag, at 390×844 against a
+  production build, in `comp4020-ass1-bada` week 4. Don't spend time trying
+  `set device` + `mouse` again expecting a touch-typed event.
 
 ## Repo-independent lessons
 
