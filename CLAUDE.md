@@ -226,6 +226,20 @@ later change doesn't reintroduce them:
   pointer capture and is the only reliable way to test a
   `setPointerCapture`-based drag from this CLI. No site bug found once
   tested correctly — the mid-drag resize still holds. Confirmed 2026-08-15.
+- The brief's cited "genre ceiling" (Ciechanowski's *Mechanical Watch*: "every
+  part is manipulable and the explanation *is* the interaction") is a bar
+  worth checking prose against directly, not just a name-drop --- the lede
+  stated the full U-shape finding (start/end good, middle bad, worse as
+  context grows) *before* "Try it", so the interactive section only ever
+  confirmed what the reader had already been told, never taught it. A blind
+  fresh-eyes subagent given only the page's text plus that exemplar quote
+  (no other context) named this precisely: asked to delete "Try it" and
+  check whether real understanding was lost, the answer was no. Fixed by
+  moving the explicit claim out of the lede and into "why the middle loses",
+  which already sits after the interactive section, so the hook now has to
+  be discovered by playing, not read and then confirmed (`8f12b20`). Worth
+  running this same blind-subagent-against-the-cited-exemplar check on any
+  page whose copy makes a claim the interaction is supposed to be teaching.
 
 ## This file is yours
 
