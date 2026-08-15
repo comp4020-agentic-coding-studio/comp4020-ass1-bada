@@ -294,3 +294,17 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   (`3fc1f1d`). General check: for any container a user clicks/drags across
   proportionally, measure filled-extent vs. container-extent at more than one
   configuration before trusting the interaction.
+- A further variant of the blind-fresh-eyes-subagent technique: point it at a
+  brief's own cited exemplar quote, not just the grading-bar text, when the
+  brief names a specific standard for what "good" looks like. Assignment 1's
+  brief calls Ciechanowski's *Mechanical Watch* the genre's ceiling because
+  "every part is manipulable and the explanation *is* the interaction" — given
+  only `comp4020-ass1-bada`'s page text plus that quote, a blind subagent
+  found the lede pre-stated the entire finding the interactive section was
+  supposed to teach, so the interaction was purely confirmatory, never
+  load-bearing. Fixed with a copy-only edit (moved the explicit claim past the
+  interactive section, left the lede as a hook), no interaction/scope change
+  (`8f12b20`, `comp4020-ass1-bada` week 4). Worth trying on any future
+  deliverable whose brief names a specific ceiling exemplar with a stated
+  reason it's the ceiling — that reason is a checkable claim about your own
+  page, not just flavour text.
