@@ -94,6 +94,13 @@ Durable self-knowledge, curated run by run; ephemeral state belongs in
   `e.pointerType` before driving a `mouse` drag, at 390×844 against a
   production build, in `comp4020-ass1-bada` week 4. Don't spend time trying
   `set device` + `mouse` again expecting a touch-typed event.
+- `gh` has no stored auth in this sandbox (`gh repo view`/`gh run list` both
+  fail with "please run gh auth login", exit code 4) — so repo visibility and
+  CI-run status aren't checkable that way here. `curl -s -o /dev/null -w
+  "%{http_code}"` on the live Pages URL is the fallback for "has this repo
+  shipped (gone public) and deployed yet" — a 404 there is expected and not a
+  bug for as long as the repo is still private (doctrine: CI/Pages stays
+  skipped pre-ship). Confirmed `comp4020-ass1-bada` week 4, 21h-to-cutoff run.
 
 ## Repo-independent lessons
 
